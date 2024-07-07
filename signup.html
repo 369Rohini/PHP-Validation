@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signup</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>Signup</h1>
+    <form id="signup"  action="process_signup.php" method="POST" autocomplete="off">
+        <div class="container">
+            <div>
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter your name" required oninput="this.value=this.value.replace(/[^a-zA-Z,]/,'')">
+                <div id="test"><b></b></div>
+            </div>
+            <div>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required oninput="this.value=this.value.replace(/[^a-zA-Z0-9@\.]+/, '')">
+                <div id="test1"><b></b></div>
+            </div>
+            <div>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required oninput="this.value=this.value.replace(/[^a-zA-Z0-9!@#$%^&*()_+=-{};:'<>,./?]+/,'')">
+                <div id="test2"><b></b></div>
+            </div>
+            <div>
+                <label for="password_confirmation">Repeat password</label>
+                <input type="password" id="password_confirmation" name="password_confirmation" required oninput="this.value=this.value.replace(/[^a-zA-Z0-9!@#$%^&*()_+=-{};:'<>,./?]+/,'')">
+                <div id="test3"><b></b></div>
+            </div>
+            <button type="button" id="submit_btn" onclick="validateAndSubmit()">Submit</button>
+        </div>
+    </form>
+    <div id="msg"></div>
+    <script>
+        function validate() {
+
+            console.log("im in script ");
+            let valid = true;
+            let str = document.getElementById("name").value;
+            let email = document.getElementById("email").value;
+            let pass = document.getElementById("password").value;
+            let passrep = document.getElementById("password_confirmation").value;
+
+            if (email.length > 25) {
+                document.getElementById('test1').innerHTML = "<p>Please enter a valid email*</p>";
+                document.getElementById('test1').style.color = "red";
+                valid = false;
+            } else {
+                document.getElementById('test1').innerHTML = "";
+            }
+
+            if (str.length == 0) {
+                document.getElementById('test').innerHTML = "<p>Please enter your name*</p>";
+                document.getElementById('test').style.color = "red";
+                valid = false;
+            } else {
+                document.getElementById('test').innerHTML = "";
+            }
+
+            if (pass !== passrep) {
+                document.getElementById('test3').innerHTML = "<p>Passwords do not match*</p>";
+                document.getElementById('test3').style.color = "red";
+                valid = false;
+            } else {
+                document.getElementById('test3').innerHTML = "";
+            }
+
+            return valid;
+        }
+
+        function validateAndSubmit() {
+            console.log("im in ajax ");
+            if (validate()) {
+                console.log(validate())
+                console.log("im befor ajax")
+                console.log("url:", "process_signup.php");
+console.log("type:", "POST");
+console.log("data:", $("#signup").serialize());
+console.log("trying to get in ajax method")
+
+$.ajax({
+    url: "process_signup.php",
+    type: "POST",
+    data: $("#signup").serialize(),
+    cache:false,
+    success: function(response) {
+        console.log("Step 1: AJAX request sent to process_signup.php"); // Log Step 1
+        if (response == "success") {
+            console.log("Step 2: Response received - success"); // Log Step 2a
+            $("#msg").html('<div class="alert alert-success">Data Inserted successfully</div>');
+            window.location.href = "signup-success.html";
+        } else {
+            console.log("Step 2: Response received - error"); // Log Step 2b
+            $("#msg").html('<div class="alert alert-danger">' + response + '</div>');
+        }
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+        console.error("AJAX request failed:", textStatus, errorThrown); // Log AJAX failure
+    }
+});
+
+
+            }
+        }
+    </script>
+</body>
+</html>
